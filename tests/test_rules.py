@@ -52,3 +52,11 @@ def test_sample_needs_agent():
     res = convert(src)
     assert len(res["todo_lines"]) == 3          # intercept, aliased wait, multi-line chain
     assert not lint(res["code"], src)["passed"]  # the gate must reject the unfinished draft
+
+
+def test_contains_wait_and_url_eq():
+    assert "await expect(page.getByText('Welcome')).toBeVisible();" in conv("cy.contains('Welcome')")
+    assert "await page.getByText('Save').click();" in conv("cy.contains('Save').click()")
+    assert "toHaveCount(0)" in conv("cy.get('.err').should('not.exist')")
+    assert "waitForTimeout(500); // TODO" in conv("cy.wait(500)")
+    assert "await expect(page).toHaveURL('/home');" in conv("cy.url().should('eq', '/home')")
